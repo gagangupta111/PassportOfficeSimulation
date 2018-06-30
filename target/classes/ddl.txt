@@ -1,0 +1,26 @@
+
+create database local1;
+use local1;
+
+CREATE USER 'user1'@'localhost' IDENTIFIED BY 'Admin@1234';
+GRANT ALL PRIVILEGES ON *.* TO 'user1'@'localhost';
+
+/*
+
+Create a user : user1
+Create database : local1
+assign rights to this user.
+
+*/
+
+create table Person (
+
+   id int NOT NULL auto_increment,
+   name varchar(100)  NOT NULL default "",
+   queueStatus int NOT NULL default 0,
+   verificationStatus varchar(100)  NOT NULL default "",
+   initialAddition varchar(100)  NOT NULL default "0001-01-01 00:00:00",
+   queueAddition varchar(100)  NOT NULL default "0001-01-01 00:00:00",
+   PRIMARY KEY (id)
+
+);

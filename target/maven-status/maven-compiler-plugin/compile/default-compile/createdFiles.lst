@@ -1,0 +1,17 @@
+com/simulation/workers/DocVerWorker.class
+com/simulation/constants/WorkerConstants.class
+com/simulation/tasks/InitialTask.class
+com/simulation/comparators/ComparatorByID.class
+com/simulation/constants/PersonConstants.class
+com/simulation/service/impl/PersonServiceImpl.class
+com/simulation/workers/Worker.class
+com/simulation/entity/Person.class
+com/simulation/service/WorkerService.class
+com/simulation/dao/PersonRepository.class
+com/simulation/queues/InitialQueue.class
+com/simulation/DemoApplication.class
+com/simulation/controller/PersonController.class
+com/simulation/workers/InitialWorker.class
+com/simulation/tasks/Task.class
+com/simulation/comparators/ComparatorByAdditionTime.class
+com/simulation/service/PersonService.class
