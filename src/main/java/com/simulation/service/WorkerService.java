@@ -16,32 +16,32 @@ public class WorkerService {
     private WorkerService() {
 
         initialQueue    = new Queue(100);
-        docVerQueue     = new Queue(10);
-        policeVerQueue  = new Queue(10);
-        bioVerQueue     = new Queue(10);
+        docVerQueue     = new Queue(20);
+        policeVerQueue  = new Queue(20);
+        bioVerQueue     = new Queue(20);
 
-        for (int i = 0; i < 3; i++){
+        for (int i = 0; i < 20; i++){
 
             Thread thread1 = new Thread(new WorkerImpl(initialQueue, docVerQueue, Status.INITIAL_INTRODUCTION_QUEUE, 15000));
             thread1.start();
 
         }
 
-        for (int i = 0; i < 3; i++){
+        for (int i = 0; i < 15; i++){
 
             Thread thread1 = new Thread(new WorkerImpl(docVerQueue, policeVerQueue, Status.DOCUMENTS_VERIFICATION_QUEUE, 10000));
             thread1.start();
 
         }
 
-        for (int i = 0; i < 3; i++){
+        for (int i = 0; i < 10; i++){
 
             Thread thread1 = new Thread(new WorkerImpl(policeVerQueue, bioVerQueue, Status.POLICE_VERIFICATION_QUEUE, 15000));
             thread1.start();
 
         }
 
-        for (int i = 0; i < 3; i++){
+        for (int i = 0; i < 12; i++){
 
             Thread thread1 = new Thread(new WorkerImpl(bioVerQueue, Status.BIO_METRIC_VERIFICATION_QUEUE, 10000));
             thread1.start();

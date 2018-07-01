@@ -25,6 +25,7 @@ public class Person {
     private String verificationStatus;
     private String initialAddition;
     private String queueAddition;
+    private Long totalTime;
 
     public Long getId() {
         return id;
@@ -72,6 +73,14 @@ public class Person {
 
     public void setQueueAddition(String queueAddition) {
         this.queueAddition = queueAddition;
+    }
+
+    public Long getTotalTime() {
+        return totalTime;
+    }
+
+    public void setTotalTime(Long totalTime) {
+        this.totalTime = totalTime;
     }
 
     @Override

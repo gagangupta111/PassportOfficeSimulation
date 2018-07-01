@@ -29,6 +29,7 @@ public final class WorkerImpl implements Worker, Runnable{
         this.sleepTime = sleepTime;
         this.queue1 = queue1;
         this.queue2 = queue2;
+        this.id = count.incrementAndGet();
         this.type = type;
     }
 
@@ -36,6 +37,7 @@ public final class WorkerImpl implements Worker, Runnable{
         this.sleepTime = sleepTime;
         this.queue1 = queue1;
         this.queue2 = null;
+        this.id = count.incrementAndGet();
         this.type = type;
     }
 
@@ -91,6 +93,10 @@ public final class WorkerImpl implements Worker, Runnable{
                     queue2.notifyAll();
 
                 }
+            }else {
+                long totalTime = Person.getCurrentTime(task.getPerson().getQueueAddition()).getTime() - Person.getCurrentTime(task.getPerson().getInitialAddition()).getTime();
+                task.getPerson().setTotalTime(totalTime);
+                BeanUtil.getBean(PersonRepository.class).save(task.getPerson());
             }
         }
     }

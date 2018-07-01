@@ -27,6 +27,21 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
+    public List<Person> findPersonsByProgress(String progress) {
+        return personRepository.findPersonsByProgress(progress);
+    }
+
+    @Override
+    public List<Person> findAllByOrderByQueueAdditionDesc() {
+        return personRepository.findAllByOrderByQueueAdditionDesc();
+    }
+
+    @Override
+    public List<Person> findAllByOrderByTotalTimeDesc() {
+        return personRepository.findAllByOrderByTotalTimeDesc();
+    }
+
+    @Override
     public List<Person> findAll() {
         return personRepository.findAll();
     }

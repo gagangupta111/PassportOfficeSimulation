@@ -2,6 +2,7 @@ package com.simulation.controller;
 
 import com.simulation.constants.Status;
 import com.simulation.entity.Person;
+import com.simulation.queues.Queue;
 import com.simulation.service.PersonService;
 import com.simulation.service.WorkerService;
 import org.springframework.stereotype.Controller;
@@ -39,11 +40,35 @@ public class PersonController {
 
     }
 
+    @GetMapping("/personOrderBy/queueAdditionDesc")
+    @ResponseBody
+    public List<Person> findAllByOrderByQueueAdditionDesc() {
+
+        return personService.findAllByOrderByQueueAdditionDesc();
+
+    }
+
+    @GetMapping("/personOrderBy/totalTimeDesc")
+    @ResponseBody
+    public List<Person> findAllByOrderByTotalTimeDesc() {
+
+        return personService.findAllByOrderByTotalTimeDesc();
+
+    }
+
     @GetMapping("/queues/")
     @ResponseBody
     public WorkerService getQueuesStatus() {
 
         return WorkerService.getInstance();
+
+    }
+
+    @GetMapping("/person/verificationStatus/{progress}")
+    @ResponseBody
+    public List<Person> getPersonsByProgress(@PathVariable("progress") String progress) {
+
+        return personService.findPersonsByProgress(progress);
 
     }
 

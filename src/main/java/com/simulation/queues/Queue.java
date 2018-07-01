@@ -2,21 +2,19 @@ package com.simulation.queues;
 
 import com.simulation.comparators.ComparatorByAdditionTime;
 import com.simulation.tasks.Task;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+
+import java.util.*;
 
 public class Queue {
 
     public static final Comparator<Task> COMPARATOR = new ComparatorByAdditionTime();
 
     private int capacity;
-    private List<Task> list;
+    private Collection<Task> list;
 
     public Queue(int capacity) {
         this.capacity = capacity;
-        list = new ArrayList<>(capacity);
+        list = new ArrayList<Task>(capacity);
     }
 
     public boolean isEmpty(){
@@ -47,7 +45,7 @@ public class Queue {
 
             list.add(task);
             if (COMPARATOR != null){
-                Collections.sort(list, COMPARATOR);
+                Collections.sort((List<Task>)(list), COMPARATOR);
             }
             this.notifyAll();
 
@@ -60,13 +58,13 @@ public class Queue {
     public Task fetch(){
 
         Task task = null;
-        task = list.get(0);
+        task = list.iterator().next();
         list.remove(task);
         return task;
 
     }
 
-    public List<Task> getList() {
+    public Collection<Task> getList() {
         return list;
     }
 

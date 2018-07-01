@@ -1,5 +1,6 @@
 package com.simulation;
 
+import com.simulation.entity.Person;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
