@@ -1,16 +1,15 @@
 package com.simulation.controller;
 
-import com.simulation.constants.PersonConstants;
+import com.simulation.constants.Status;
 import com.simulation.entity.Person;
 import com.simulation.service.PersonService;
+import com.simulation.service.WorkerService;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -40,14 +39,22 @@ public class PersonController {
 
     }
 
+    @GetMapping("/queues/")
+    @ResponseBody
+    public WorkerService getQueuesStatus() {
+
+        return WorkerService.getInstance();
+
+    }
+
     @PostMapping("/person/save")
     @ResponseBody
     public Person saveProduct(@RequestBody Person person) {
 
         person.setInitialAddition(Person.getCurrentTime());
         person.setQueueAddition(Person.getCurrentTime());
-        person.setQueueStatus(PersonConstants.queueStatus_0);
-        person.setVerificationStatus(PersonConstants.INITIAL_INTRO_DONE);
+        person.setQueueStatus(Status.INITIAL_INTRODUCTION_QUEUE.getLevelCode());
+        person.setVerificationStatus(Status.INITIAL_INTRODUCTION_QUEUE.getMessage());
         return personService.save(person);
 
     }

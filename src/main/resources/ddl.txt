@@ -13,6 +13,8 @@ assign rights to this user.
 
 */
 
+do not create table, it will be created by itself
+
 create table Person (
 
    id int NOT NULL auto_increment,

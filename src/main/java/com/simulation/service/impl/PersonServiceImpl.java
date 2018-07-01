@@ -33,9 +33,11 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     public Person save(Person person) {
+
         Person person1 = personRepository.save(person);
-        workerService.getQueue().add(new InitialTask(person1));
+        workerService.getInitialQueue().add(new InitialTask(person1));
         return person1;
+
     }
 
     @Override
