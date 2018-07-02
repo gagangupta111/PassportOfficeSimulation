@@ -1,8 +1,8 @@
 package com.simulation.queues;
 
 import com.simulation.comparators.ComparatorByAdditionTime;
+import com.simulation.comparators.ComparatorByID;
 import com.simulation.tasks.Task;
-
 import java.util.*;
 
 public class Queue {
@@ -44,9 +44,6 @@ public class Queue {
         synchronized (this){
 
             list.add(task);
-            if (COMPARATOR != null){
-                Collections.sort((List<Task>)(list), COMPARATOR);
-            }
             this.notifyAll();
 
         }
@@ -58,6 +55,9 @@ public class Queue {
     public Task fetch(){
 
         Task task = null;
+        if (COMPARATOR != null){
+            Collections.sort((List<Task>)(list), COMPARATOR);
+        }
         task = list.iterator().next();
         list.remove(task);
         return task;

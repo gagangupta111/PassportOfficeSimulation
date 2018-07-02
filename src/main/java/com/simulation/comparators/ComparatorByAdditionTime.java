@@ -13,7 +13,7 @@ public class ComparatorByAdditionTime implements Comparator<Task> {
         if (Person.getCurrentTime(o1.getPerson().getQueueAddition()).before(Person.getCurrentTime(o2.getPerson().getQueueAddition()))){
             return 1;
         }else if (Person.getCurrentTime(o1.getPerson().getQueueAddition()).after(Person.getCurrentTime(o2.getPerson().getQueueAddition()))){
-            return 1;
+            return -1;
         }else {
             return 0;
         }

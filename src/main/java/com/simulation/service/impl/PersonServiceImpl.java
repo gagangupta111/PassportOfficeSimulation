@@ -3,8 +3,9 @@ package com.simulation.service.impl;
 import com.simulation.dao.PersonRepository;
 import com.simulation.entity.Person;
 import com.simulation.service.PersonService;
-import com.simulation.service.WorkerService;
+import com.simulation.service.QueueService;
 import com.simulation.tasks.InitialTask;
+import com.simulation.util.BeanUtil;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
@@ -15,10 +16,11 @@ import java.util.Optional;
 public class PersonServiceImpl implements PersonService {
 
     private PersonRepository personRepository;
-    private WorkerService workerService = WorkerService.getInstance();
+    private QueueService queueService;
 
-    public PersonServiceImpl(PersonRepository personRepository) {
+    public PersonServiceImpl(PersonRepository personRepository, QueueService queueService) {
         this.personRepository = personRepository;
+        this.queueService = queueService;
     }
 
     @Override
@@ -50,7 +52,7 @@ public class PersonServiceImpl implements PersonService {
     public Person save(Person person) {
 
         Person person1 = personRepository.save(person);
-        workerService.getInitialQueue().add(new InitialTask(person1));
+        queueService.getInitialQueue().add(new InitialTask(person1));
         return person1;
 
     }

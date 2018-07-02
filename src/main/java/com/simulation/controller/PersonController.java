@@ -4,7 +4,10 @@ import com.simulation.constants.Status;
 import com.simulation.entity.Person;
 import com.simulation.queues.Queue;
 import com.simulation.service.PersonService;
-import com.simulation.service.WorkerService;
+import com.simulation.service.QueueService;
+import com.simulation.service.impl.QueueServiceImpl;
+import com.simulation.util.BeanUtil;
+import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,9 +21,11 @@ import java.util.Optional;
 public class PersonController {
 
     private PersonService personService;
+    private QueueService queueService;
 
-    public PersonController(PersonService personService) {
+    public PersonController(PersonService personService, QueueService queueService) {
         this.personService = personService;
+        this.queueService = queueService;
     }
 
     @GetMapping("/person/{id}")
@@ -58,9 +63,16 @@ public class PersonController {
 
     @GetMapping("/queues/")
     @ResponseBody
-    public WorkerService getQueuesStatus() {
+    public String getQueuesStatus() {
 
-        return WorkerService.getInstance();
+        String message;
+        JSONObject json = new JSONObject();
+        json.put("docVerQueue", queueService.getDocVerQueue());
+        json.put("policeVerQueue", queueService.getPoliceVerQueue());
+        json.put("bioVerQueue", queueService.getBioVerQueue());
+
+        message = json.toString();
+        return message;
 
     }
 
