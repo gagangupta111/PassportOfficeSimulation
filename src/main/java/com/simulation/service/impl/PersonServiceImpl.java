@@ -52,7 +52,7 @@ public class PersonServiceImpl implements PersonService {
     public Person save(Person person) {
 
         Person person1 = personRepository.save(person);
-        queueService.getInitialQueue().add(new InitialTask(person1));
+        queueService.getList().get(0).add(new InitialTask(person1));
         return person1;
 
     }

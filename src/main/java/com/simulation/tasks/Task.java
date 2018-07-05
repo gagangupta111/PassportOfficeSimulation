@@ -12,8 +12,8 @@ public interface Task {
 
     public Person getPerson();
 
-    public Enum<Status> getType();
+    public Status getType();
 
-    public void setType(Enum<Status> type);
+    public void setType(Status type);
 
 }

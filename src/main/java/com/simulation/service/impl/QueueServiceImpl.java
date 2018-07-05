@@ -7,141 +7,95 @@ import com.simulation.workers.WorkerImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Configuration
 @Service
 @PropertySource("classpath:application.properties")
 public class QueueServiceImpl implements QueueService {
 
-    private Queue initialQueue;
-    private Queue docVerQueue;
-    private Queue policeVerQueue;
-    private Queue bioVerQueue;
+    public static final String IN_QUEUE_ = "IN_QUEUE_";
+    public static final String IN_PROGRESS_ = "IN_PROGRESS_";
+    Map<WorkerImpl, Thread> map = new HashMap<>();
 
     @Value("${agents.initial.Ver}")
     private int agentsInitialVer;
 
-    @Value("${agents.doc.Ver}")
-    private int agentsDocVer;
-
-    @Value("${agents.police.Ver}")
-    private int agentsPoliceVer;
-
-    @Value("${agents.bio.Ver}")
-    private int agentsBioVer;
-
-
     @Value("${time.initial.Ver}")
     private int timeInitialVer;
 
-    @Value("${time.doc.Ver}")
-    private int timeDocVer;
+    @Value("${capacity.initial.Ver}")
+    private int capacityInitialVer;
 
-    @Value("${time.police.Ver}")
-    private int timePoliceVer;
+    private List<Queue> list = new ArrayList<Queue>();
 
-    @Value("${time.bio.Ver}")
-    private int timeBioVer;
+    public List<Queue> getList() {
+        return list;
+    }
 
+    public void setList(List<Queue> list) {
+        this.list = list;
+    }
 
-    @Value("${size.initial.Ver}")
-    private int sizeInitialVer;
-
-    @Value("${size.doc.Ver}")
-    private int sizeDocVer;
-
-    @Value("${size.police.Ver}")
-    private int sizePoliceVer;
-
-    @Value("${size.bio.Ver}")
-    private int sizeBioVer;
+    public void reInitialize(List<Queue> queues){
+        this.list.addAll(queues);
+        init();
+    }
 
     @PostConstruct
     public void init() {
 
-        initialQueue    = new Queue(sizeInitialVer);
-        docVerQueue     = new Queue(sizeDocVer);
-        policeVerQueue  = new Queue(sizePoliceVer);
-        bioVerQueue     = new Queue(sizeBioVer);
-
-        for (int i = 0; i < agentsInitialVer; i++){
-
-            Thread thread1 = new Thread(new WorkerImpl(initialQueue, docVerQueue, Status.INITIAL_INTRODUCTION_QUEUE, timeInitialVer*1000));
-            thread1.start();
-
+        Set<WorkerImpl> set = map.keySet();
+        for (WorkerImpl worker : set){
+            worker.terminate();
+            map.get(worker).interrupt();
+            try {
+                map.get(worker).join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
-        for (int i = 0; i < agentsDocVer; i++){
-
-            Thread thread1 = new Thread(new WorkerImpl(docVerQueue, policeVerQueue, Status.DOCUMENTS_VERIFICATION_QUEUE, timeDocVer*1000));
-            thread1.start();
-
+        if (list.isEmpty()){
+            Queue queue = new Queue(capacityInitialVer);
+            queue.setTime(timeInitialVer);
+            queue.setAgents(agentsInitialVer);
+            list.add(queue);
         }
 
-        for (int i = 0; i < agentsPoliceVer; i++){
+        int count = 0;
+        for (int i = 0 ; i < list.size(); i++, count = count+2){
 
-            Thread thread1 = new Thread(new WorkerImpl(policeVerQueue, bioVerQueue, Status.POLICE_VERIFICATION_QUEUE, timePoliceVer*1000));
-            thread1.start();
+            Queue queue1 = list.get(i);
+            Queue queue2 = (i+1) >= list.size() ? null : list.get(i+1);
+            Status newType = Status.map.get(count);
+            if (newType == null){
+                Status status;
+                    status = new Status(count, IN_QUEUE_ + "QUEUE" + count);
+                    Status.map.put(count, status);
+                    Status.map.put(count + 1, new Status(count + 1, IN_PROGRESS_ + "QUEUE" + count + 1));
+                    newType = status;
+
+            }
+            int agents = queue1.getAgents();
+            for (int j = 0; j < agents; j++){
+
+                WorkerImpl worker = new WorkerImpl(queue1, queue2, newType, queue1.getTime()*1000);
+                Thread thread1 = new Thread( worker,"WorkerImpl");
+                map.put(worker, thread1);
+                thread1.start();
+
+            }
 
         }
-
-        for (int i = 0; i < agentsBioVer; i++){
-
-            Thread thread1 = new Thread(new WorkerImpl(bioVerQueue, Status.BIO_METRIC_VERIFICATION_QUEUE, timeBioVer*1000));
-            thread1.start();
-
-        }
-
-    }
-
-    @Override
-    public Queue getInitialQueue() {
-        return initialQueue;
-    }
-
-    public void setInitialQueue(Queue initialQueue) {
-        this.initialQueue = initialQueue;
-    }
-
-    @Override
-    public Queue getDocVerQueue() {
-        return docVerQueue;
-    }
-
-    public void setDocVerQueue(Queue docVerQueue) {
-        this.docVerQueue = docVerQueue;
-    }
-
-    @Override
-    public Queue getPoliceVerQueue() {
-        return policeVerQueue;
-    }
-
-    public void setPoliceVerQueue(Queue policeVerQueue) {
-        this.policeVerQueue = policeVerQueue;
-    }
-
-    @Override
-    public Queue getBioVerQueue() {
-        return bioVerQueue;
-    }
-
-    public void setBioVerQueue(Queue bioVerQueue) {
-        this.bioVerQueue = bioVerQueue;
-    }
-
-    @Override
-    public String toString() {
-
-        return "QueueService{" +
-                "initialQueue=" + initialQueue +
-                ", docVerQueue=" + docVerQueue +
-                ", policeVerQueue=" + policeVerQueue +
-                ", bioVerQueue=" + bioVerQueue +
-                '}';
 
     }
 

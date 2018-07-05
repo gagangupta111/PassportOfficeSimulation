@@ -9,13 +9,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.simulation.service.impl.QueueServiceImpl.IN_PROGRESS_;
+import static com.simulation.service.impl.QueueServiceImpl.IN_QUEUE_;
+
 public class InitialTask implements Task {
 
     private PersonRepository personRepository = BeanUtil.getBean(PersonRepository.class);
 
     private long id;
     private Person person;
-    private Enum<Status> type = Status.INITIAL_INTRODUCTION_QUEUE;
+    private Status type = Status.map.get(0);
     private static final AtomicInteger count = new AtomicInteger(0);
 
     public InitialTask(Person person) {
@@ -30,7 +33,21 @@ public class InitialTask implements Task {
     @Override
     public void execute(Worker worker) {
 
-        Status newType = Status.map.get(((Status)type).getLevelCode()+1);
+        Status status = null;
+        int level = ((Status)type).getLevelCode()+1;
+        Status newType = Status.map.get(level);
+        if (newType == null){
+            if (worker.getQueue2() != null) {
+                status = new Status(level, IN_QUEUE_ + "QUEUE" + level);
+                Status.map.put(level, status);
+                Status.map.put(level + 1, new Status(level + 1, IN_PROGRESS_ + "QUEUE" + level + 1));
+                newType = status;
+            }else {
+                status = new Status(level, "PROCESSED");
+                Status.map.put(level, status);
+                newType = status;
+            }
+        }
         this.type = newType;
         person.setQueueAddition(Person.getCurrentTime());
         person.setQueueStatus(( newType).getLevelCode());
@@ -48,11 +65,11 @@ public class InitialTask implements Task {
         return person;
     }
 
-    public Enum<Status> getType() {
+    public Status getType() {
         return type;
     }
 
-    public void setType(Enum<Status> type) {
+    public void setType(Status type) {
         this.type = type;
     }
 

@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,18 +63,19 @@ public class PersonController {
 
     }
 
+    @GetMapping("/queues/{id}")
+    @ResponseBody
+    public Queue getQueuesStatus(@PathVariable("id") int id) {
+
+        return queueService.getList().get(id);
+
+    }
+
     @GetMapping("/queues/")
     @ResponseBody
-    public String getQueuesStatus() {
+    public List<Queue> getQueues() {
 
-        String message;
-        JSONObject json = new JSONObject();
-        json.put("docVerQueue", queueService.getDocVerQueue());
-        json.put("policeVerQueue", queueService.getPoliceVerQueue());
-        json.put("bioVerQueue", queueService.getBioVerQueue());
-
-        message = json.toString();
-        return message;
+        return queueService.getList();
 
     }
 
@@ -90,9 +93,18 @@ public class PersonController {
 
         person.setInitialAddition(Person.getCurrentTime());
         person.setQueueAddition(Person.getCurrentTime());
-        person.setQueueStatus(Status.INITIAL_INTRODUCTION_QUEUE.getLevelCode());
-        person.setVerificationStatus(Status.INITIAL_INTRODUCTION_QUEUE.getMessage());
+        person.setQueueStatus(Status.map.get(0).getLevelCode());
+        person.setVerificationStatus(Status.map.get(0).getMessage());
         return personService.save(person);
+
+    }
+
+    @PostMapping("/initializeQueues")
+    @ResponseBody
+    public List<Queue> initializeQueues(@RequestBody List<Queue> queues) {
+
+        queueService.reInitialize(queues);
+        return queueService.getList();
 
     }
 
