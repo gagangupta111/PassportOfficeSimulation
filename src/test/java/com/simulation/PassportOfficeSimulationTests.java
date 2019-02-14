@@ -11,6 +11,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
+
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -45,6 +50,10 @@ public class PassportOfficeSimulationTests {
         this.mockMvc.perform(get("/person/"))
                 .andDo(print())
                 .andExpect(content().string(containsString("Person1")));
+
+        Map<Integer, Integer> map = new HashMap<>();
+        map = new TreeMap<>();
+
     }
 
     @Test
